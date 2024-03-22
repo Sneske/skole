@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+    function changeButtonText(button) {
+        button.innerText = "Du er ikke admin";
+    }
+
+    function restoreButtonText(button) {
+        button.innerText = "Tilføj et Produkt";
+    }
+</script>
+
+<div class="flex justify-center items-center py-16">
+    <div class="mb-4 space-y-4">
+        <h1 class="text-lg">Hej {{ session.username }} !</h1>
+        {% if 'username' in session and session['username'] == 'admin' %}
+        <a href="/tilfoj" class="bg-green-800 text-white px-4 py-2 rounded-md hover:bg-green-500 block w-full text-center">Tilføj et Produkt</a>
+        {% endif %}
+        <a href="/" class="bg-green-800 text-white px-4 py-2 rounded-md hover:bg-green-500 block w-full text-center">Produkter til salg</a>
+        <a href="/logout" class="bg-green-800 text-white px-4 py-2 rounded-md hover:bg-green-500 block w-full text-center">Log ud</a>    </div>
+</div>
+
+{% endblock %}
+
+{% if session.get("username") %}
+<a href="/profile" class="text-lg text-white">{{ session.username }}</a>
+{% else %}
+<a href="/login" class="text-white hover:text-green-500">Login</a>
+{% endif %}

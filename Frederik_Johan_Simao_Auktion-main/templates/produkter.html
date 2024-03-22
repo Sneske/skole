@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script type="text/javascript">
+    function AdjustSlider(id) {
+        minPriceSlider = document.getElementById('minPriceSlider');
+        maxPriceSlider = document.getElementById('maxPriceSlider');
+
+        console.log(maxPriceSlider.value);
+
+        if (parseInt(minPriceSlider.value) > parseInt(maxPriceSlider.value)) {
+            if (id == 'minPriceSlider') {
+                maxPriceSlider.value = minPriceSlider.value;
+            } else if (id == 'maxPriceSlider') {
+                minPriceSlider.value = maxPriceSlider.value;
+            }
+        }
+
+        document.getElementById('minPriceLabel').innerText = "Minimum pris: " + minPriceSlider.value;
+        document.getElementById('maxPriceLabel').innerText = "Maksimum pris: " + maxPriceSlider.value;
+
+        postAfterDelay()
+    }
+
+
+
+    function postAfterDelay() {
+        if (typeof postDataTimer !== 'undefined') {
+            clearTimeout(postDataTimer);
+        }
+
+        postDataTimer = setTimeout(postFilters, 500);
+    }
+
+    function postFilters() {
+        var selectedFilters = [];
+        const allFilters = document.querySelectorAll(".filters");
+        const searchQuery = document.getElementById('searchbar').value;
+        const priceMin = document.getElementById('minPriceSlider').value;
+        const priceMax = document.getElementById('maxPriceSlider').value;
+        allFilters.forEach(filter => {
+            if (filter.checked) {
+                selectedFilters.push(filter.id);
+            }
+        })
+        fetch('/update_products', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filters: selectedFilters, searchQuery: searchQuery, minPrice: priceMin, maxPrice: priceMax })
+        })
+            .then(response => response.text())
+            .then(data => document.getElementById("content").innerHTML = data)
+            .catch(error => {
+                console.log("Error updating filters");
+            });
+    }
+
+</script>
+<div id="wrapper" class="grid grid-cols-7 p-2">
+    <aside id="sidebar" class="self-start h-full m-2 p-2 top-0 col-span-1 border-2 border-sky-500">
+        <h3>Kategorier</h3>
+        <input class="filters" type="checkbox" id="møbler" onclick="postAfterDelay();" value="Category A"> Moebler
+        <br>
+        <br>
+        <input class="filters" type="checkbox" id="nips" value="Category B" onclick="postAfterDelay();"> Nips
+        <br>
+        <br>
+        <input class="filters" type="checkbox" id="sølvtøj" value="Category C" onclick="postAfterDelay();"> soelvtoej
+        <br>
+        <br>
+        <input class="filters" type="checkbox" id="smykker" value="Category D" onclick="postAfterDelay();"> Smykker
+        <br>
+        <br>
+        <input class="filters" type="checkbox" id="porcelæn" value="Category E" onclick="postAfterDelay();"> Porcelaen
+        <br>
+        <br>
+        <input class="filters" type="checkbox" id="glas" value="Category F" onclick="postAfterDelay();"> Glas<br>
+        <br>
+        <h3>Prisniveau</h3>
+        <p id='minPriceLabel'> Minimum pris: 0 </p>
+        <input class='w-full' id='minPriceSlider' type='range' min='1' max='10000' value='1'
+            oninput='AdjustSlider(this.id)'></input>
+        <p id='maxPriceLabel'> Maksimum pris: 10000 </p>
+        <input class='w-full' id='maxPriceSlider' type='range' min='1' max='10000' value='10000'
+            oninput='AdjustSlider(this.id)'></input>
+    </aside>
+
+    <div class="col-span-6 h-full border-2 m-2 p-2 border-sky-500">
+        <input class='w-full rounded-lg border-2 border-sky-500 p-1 text-lg' id='searchbar' oninput="postAfterDelay();"
+            type='textfield' placeholder='Søg efter vare'></input>
+        <div id="content" class="grid grid-cols-3 gap-4 mt-2">
+            {% for product in zip(products, statusColor) %}
+            <div id="product-container" 
+                class="w-full h-full rounded-lg p-2 border-2 {{product[1]}}">
+                <img src="data:{{ product[0].mimetype }};base64,{{ product[0].img | custom_b64encode }}"
+                    alt="{{ product[0].imgname }}">
+                <h2>Pris: {{product[0].pris}} kr</h2>
+                <h4>{{product[0].beskrivelse}}</h4>
+                {% if product[0].tid > datetime.utcnow()%}
+                <p>Countdown: {{ (product[0].tid - datetime.utcnow()).total_seconds() // 3600 }} hours {{
+                    (product[0].tid - datetime.utcnow()).total_seconds() % 3600 // 60 }} minutes</p>
+                {% elif product[0].tid <= datetime.utcnow()%} <p>Afsluttet: {{ (datetime.utcnow() -
+                    product[0].tid).total_seconds() // 3600 }} hours {{ (datetime.utcnow() -
+                    product[0].tid).total_seconds() % 3600 // 60 }} minutes</p>
+                    {% else %}
+                    <p>No countdown set</p>
+                    {% endif %}
+		    {% if product[0].vinder %}
+		    <h3>Vinder af auktion: {{product[0].vinder}}</h3>
+		    {% else %}
+                    <form action="{{ url_for('checkbid') }}" method="post">
+                        <input type="hidden" name="idprodukt" value="{{ product[0].id }}">
+                        <input type="number" name="bid" step="1" min="{{ product[0].pris }}"
+                            placeholder="Giv et bud" required>
+                        <!--hvis produktet den nuværende bruger har et bud på en varer vises der forhøj bud-->
+                        <button type="submit">Giv et bud</button>
+                    </form>
+		    {% endif %}
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

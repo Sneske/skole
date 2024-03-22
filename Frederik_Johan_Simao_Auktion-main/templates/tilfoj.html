@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="flex justify-center items-center py-16">
+        <form method="POST" action="{{ url_for('tilfoj') }}" class="max-w-md w-full" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+
+            <h2 class="text-2xl font-semibold mb-4 text-center">Tilføj et produkt</h2>
+
+            <div class="mb-4">
+                {{ form.name.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.name(class="form-input w-full px-3 py-2 border rounded-md") }}
+                {% for error in form.name.errors %}
+                    <p class="text-sm text-red-500">{{ error }}</p>
+                {% endfor %}
+            </div>
+            
+            <div class="mb-4">
+                {{ form.beskrivelse.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.beskrivelse(class="form-input w-full px-3 py-2 border rounded-md") }}
+                {% for error in form.beskrivelse.errors %}
+                    <p class="text-sm text-red-500">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.kategorier.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.kategorier(class="form-input w-full px-3 py-2 border rounded-md bg-white") }}
+                {% for error in form.kategorier.errors %}
+                    <p class="text-sm text-red-500">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.pris.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.pris(class="form-input w-full px-3 py-2 border rounded-md") }}
+                {% for error in form.pris.errors %}
+                    <p class="text-sm text-red-500">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+
+            <div class="mb-4">
+                <input type="file" name="pic" />
+            </div>
+
+            <div class="mb-4">
+                <div class="flex items-center">
+                    <div class="mr-4">
+                        {{ form.nedtimer.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                        {{ form.nedtimer(class="form-input w-16 px-3 py-2 border rounded-md") }}
+                    </div>
+                    <div>
+                        {{ form.nedminutter.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                        {{ form.nedminutter(class="form-input w-16 px-3 py-2 border rounded-md") }}
+                    </div>
+                </div>
+            </div>
+            
+
+
+            <div>
+                {{ form.submit(class="bg-green-800 text-white px-4 py-2 rounded-md hover:bg-green-500 w-full") }}
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

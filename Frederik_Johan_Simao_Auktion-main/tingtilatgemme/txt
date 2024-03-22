@@ -1,0 +1,22 @@
+#ting der kan værer brug bare sener 
+import pybase64
+with open("my_image.jpg", "rb") as img_file:
+    my_string = pybase64.b64encode(img_file.read())
+print(my_string)
+ 
+#nå det kommer til decodeing er det lidt forvirerne 
+
+#ellers 
+
+import base64
+import requests
+
+# Getting image in bytes
+response = requests.get("image_url") 
+
+# image encoding
+encoded_image = base64.b64encode(response.content)
+
+# image decoding and without it's won't work due to some '\xff' error
+decoded_image= base64.b64decode(encoded_image)
+

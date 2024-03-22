@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+
+<body>
+  <nav class="bg-green-800 p-5">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="/" class="text-white text-2xl font-bold">HillerødAuktion.dk</a>
+      {% if session.get("username") %}
+        <a href="/profile" class="text-lg text-white">{{ session.username }}</a>
+      {% else %}
+        <a href="/login" class="text-white hover:text-green-500">Login</a>
+      {% endif %}
+
+    </div>
+  </nav>
+
+  {% block content %}
+  {% endblock %}
+</body>
+
+</html>

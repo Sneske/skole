@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Flask Demo site</title>
+    <link href="../static/css/styles.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <main>
+    <h3>Upload an image</h3>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <br/>
+            <input type="submit" value="Upload">
+        </form>
+        <h4 style="color:red">{{ msg }}</h4>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </main>
+    <footer>
+		<p>#Demo af Flask og SQLAlchemy</p>
+    </footer>
+</body>
+</html>

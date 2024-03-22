@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="flex justify-center items-center py-16">
+        <form method="POST" action="{{ url_for('signup') }}" class="max-w-md w-full">
+            {{ form.hidden_tag() }}
+
+            <h2 class="text-2xl font-semibold mb-4 text-center">Sign Up</h2>
+            <div class="mb-4">
+                {{ form.username.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.username(class="form-input w-full px-3 py-2 border rounded-md") }}
+                {% for error in form.username.errors %}
+                    <p class="text-sm text-red-500">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.password.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.password(class="form-input w-full px-3 py-2 border rounded-md") }}
+                {% for error in form.password.errors %}
+                    <p class="text-sm text-red-500">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.confirmpassword.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.confirmpassword(class="form-input w-full px-3 py-2 border rounded-md") }}
+                {% for error in form.confirmpassword.errors %}
+                    <p class="text-sm text-red-500">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="mb-4">
+                {% with message = get_flashed_messages() %}
+                <div class="text-red-500">{{ message[0]|default('') }}</div>
+                {% endwith %}
+            </div>
+
+            <div>
+                {{ form.submit(class="bg-green-800 text-white px-4 py-2 rounded-md hover:bg-green-500 w-full") }}
+            </div>
+        </form>
+    </div>
+
+    <p class="mt-4 text-center">Har du allerede en konto? <a href="{{ url_for('login') }}" class="text-green-500">Log in</a></p>
+{% endblock %}
